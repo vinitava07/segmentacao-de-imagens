@@ -3,7 +3,13 @@
 #include <iostream>
 #include <string.h>
 #include <string>
+#include <math.h>
+#include <numeric>
+#include <algorithm>
+#include <iterator>
+#include <vector>
 
+#define WIDTH 4
 
 class Image
 {
@@ -27,9 +33,14 @@ public:
     Pixel *pixels;
     Pixel **img;
     size_t imgSize;
+    double sigma;
     Image(const char *filename);
     ~Image();
     void readImage();
+    void smooth(double sig);
+    std::vector<double> *make_fgauss();
+    std::vector<double> *normalize(const std::vector<double> *mask);
+    Image::Pixel **convolve_even(Image::Pixel **src, const std::vector<double> *mask);
     Pixel **arrToMatrix();
     // void writeImage(Pixel *rImg, Universe *u);
 

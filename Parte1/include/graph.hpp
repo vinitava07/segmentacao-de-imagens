@@ -20,7 +20,6 @@ private:
     int width;
     int min;
     int k;
-    double sigma;
 
 public:
     Vertex **adj;
@@ -32,24 +31,21 @@ public:
         int height = image->header.height;
         int width = image->header.width;
         int label = 0;
+        //estebelece os pixeis para cada vertice
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                /* code */
-                // cout << (int)image->img[i][j].red << " ";
-
                 addPixel(i, j, image->img[i][j], label);
                 label++;
-                // addEdge(i, j, image.imgPixel[(i * height) + j].blue);
             }
             label++;
         }
+        //liga os vertices pela vizinhaça dos 8 lados na imagem
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                /* code */
                 if (i + 1 < height && j + 1 < width)
                 {
                     addEdge(i, j, i + 1, j + 1, 0, image->img[i + 1][j + 1]);
@@ -112,12 +108,11 @@ public:
             edges->push_back(Edge(new Vizinho(p, 0, currLabel), new Vizinho(adj[i][j].pixel, 0, destLabel), weight));
         }
     }
+    //equilibrar o peso da aresta baseado nos pixeis que ela liga
     float intensity(Image::Pixel p, Image::Pixel p2)
     {
         float result = 0;
-        // result = (p.blue + p.green + p.red) / 3;
         result = std::sqrt(pow((p.red - p2.red), 2) + pow((p.green - p2.green), 2) + pow((p.blue - p2.blue), 2));
-        // cout << result << " ";
         return result;
     }
     Universe *segmentation()
@@ -131,8 +126,9 @@ public:
         {
             getThreshold(1, c);
         }
-
-        std::sort(edges->begin(), edges->end());
+        // ordena as arestas
+         std::sort(edges->begin(), edges->end());
+        // ve se as arestas de duas arvores diferentes pertecem ao threshold, se sim, junte os componentes
         for (int i = 0; i < edges->size(); i++)
         {
 
@@ -150,7 +146,7 @@ public:
                 }
             }
         }
-
+        // tratando os componentes pequenos
         for (int i = 0; i < edges->size(); i++)
         {
             int v1 = u->find(edges->at(i).v1->label);
@@ -168,82 +164,10 @@ public:
         return c / (size);
     }
 
-    Image::Pixel **smooth(Image::Pixel **src)
-    {
-        std::vector<double> *mask = make_fgauss();
-        mask = normalize(mask);
-        Image::Pixel **tmp = convolve_even(src, mask);
-        Image::Pixel **dst = convolve_even(tmp, mask);
-
-        return dst;
-    }
-
-    // Função para criar máscara gaussiana
-    std::vector<double> *make_fgauss()
-    {
-        sigma = std::max(sigma, 0.01);
-        int length = std::ceil(sigma * WIDTH) + 1;
-        std::vector<double> *mask = new std::vector<double>(length, 0.0);
-
-        for (int i = 0; i < length; ++i)
-        {
-            mask->at(i) = std::exp(-0.5 * std::pow(i / sigma, i / sigma));
-        }
-
-        return mask;
-    }
-
-    // Função para normalizar a máscara
-    std::vector<double> *normalize(const std::vector<double> *mask)
-    {
-        double sum = 2 * std::accumulate(mask->begin(), mask->end(), 0.0, [](double acc, double val)
-                                         { return acc + std::abs(val); }) +
-                     std::abs(mask->at(0));
-
-        std::vector<double> *normalized_mask = new std::vector<double>(mask->size());
-        std::transform(mask->begin(), mask->end(), normalized_mask->begin(), [sum](double val)
-                       { return val / sum; });
-
-        return normalized_mask;
-    }
-
-    // Função para convolver src com a máscara
-    Image::Pixel **convolve_even(Image::Pixel **src, const std::vector<double> *mask)
-    {
-        int length = mask->size();
-        Image::Pixel **output = new Image::Pixel *[height];
-        for (int i = 0; i < height; ++i)
-        {
-            output[i] = new Image::Pixel[width];
-        }
-
-        for (int y = 0; y < height; ++y)
-        {
-            for (int x = 0; x < width; ++x)
-            {
-                double sum_red = mask->at(0) * src[y][x].red;
-                double sum_green = mask->at(0) * src[y][x].green;
-                double sum_blue = mask->at(0) * src[y][x].blue;
-
-                for (int i = 1; i < length; ++i)
-                {
-                    sum_red += mask->at(i) * (src[y][std::max(x - i, 0)].red + src[y][std::min(x + i, width - 1)].red);
-                    sum_green += mask->at(i) * (src[y][std::max(x - i, 0)].green + src[y][std::min(x + i, width - 1)].green);
-                    sum_blue += mask->at(i) * (src[y][std::max(x - i, 0)].blue + src[y][std::min(x + i, width - 1)].blue);
-                }
-                output[y][x].red = static_cast<unsigned char>(std::min(255.0, std::max(0.0, sum_red)));
-                output[y][x].green = static_cast<unsigned char>(std::min(255.0, std::max(0.0, sum_green)));
-                output[y][x].blue = static_cast<unsigned char>(std::min(255.0, std::max(0.0, sum_blue)));
-            }
-        }
-
-        return output;
-    }
-    Graph(size_t v, Image *img, int m, int ka, double sig)
+    Graph(size_t v, Image *img, int m, int ka)
     {
         min = m;
         k = ka;
-        sigma = sigma;
         height = img->header.height;
         width = img->header.width;
         edges = new std::vector<Edge>();

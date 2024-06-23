@@ -14,10 +14,11 @@ void writeImage(Image::Pixel *rImg, Universe *u, Image *img, Graph *g)
         std::cerr << "Erro ao abrir o arquivo de saída!" << std::endl;
         return;
     }
-
+    // escreve o header
     fprintf(saida, "%s\n%d %d\n%d\n", img->header.format, img->header.width, img->header.height, img->header.color);
 
     int comp;
+    // pega a cor de cada componente
     for (int i = 0; i < img->header.height; i++)
     {
         for (int j = 0; j < img->header.width; j++)
@@ -35,14 +36,17 @@ int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
-    Image *image = new Image("greyFlowers.ppm");
+    Image *image = new Image("flower.ppm");
     image->readImage();
     size_t graphSize = image->imgSize;
-    int count = 0;
-    Graph *g = new Graph(graphSize, image, 50, 5000, 0.8);
-    image->img = g->smooth(image->img);
+    // aplicar filtro gaussiano na imagem
+    image->smooth(0.8);
+    Graph *g = new Graph(graphSize, image, 50, 300);
+    // criar o grafo relativo a imagem (pode ser melhorado)
     g->imageToGraph(image);
+    // realiza a segmentação e devolve o union-find
     Universe *u = g->segmentation();
+    // gerando cores aleatórias para a imagem segmentada
     Image::Pixel *p = (Image::Pixel *)malloc(g->edges->size() * sizeof(Image::Pixel));
     for (size_t i = 0; i < g->edges->size(); i++)
     {
@@ -51,8 +55,6 @@ int main(int argc, char const *argv[])
         p[i].blue = rand() % 255;
     }
     writeImage(p, u, image, g);
-    // delete g;
-
     auto end = sc.now();                                                 // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<chrono::duration<double>>(end - start); // measure time span between start & end
     cout << "Operation took: " << time_span.count() << " seconds !!!";
