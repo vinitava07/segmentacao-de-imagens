@@ -95,6 +95,13 @@ void Image::smooth(double sig)
     mask = normalize(mask);
     Image::Pixel **tmp = convolve_even(img, mask);
     Image::Pixel **dst = convolve_even(tmp, mask);
+    for (int i = 0; i < header.height; i++)
+    {
+        delete[] img[i];
+        img[i] = nullptr;
+    }
+    delete[] img;
+    img = dst;
 }
 
 // Função para criar máscara gaussiana

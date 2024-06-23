@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
-    Image *image = new Image("flower.ppm");
+    Image *image = new Image("baseball.ppm");
     image->readImage();
     size_t graphSize = image->imgSize;
     // aplicar filtro gaussiano na imagem
