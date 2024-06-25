@@ -36,12 +36,12 @@ int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
-    Image *image = new Image("baseball.ppm");
+    Image *image = new Image("flamengo.ppm");
     image->readImage();
     size_t graphSize = image->imgSize;
     // aplicar filtro gaussiano na imagem
-    image->smooth(0.8);
-    Graph *g = new Graph(graphSize, image, 50, 300);
+    image->smooth(0.2);
+    Graph *g = new Graph(graphSize, image, 35, 300);
     // criar o grafo relativo a imagem (pode ser melhorado)
     g->imageToGraph(image);
     // realiza a segmentação e devolve o union-find

@@ -6,7 +6,7 @@
 #include <random>
 
 using namespace std;
-void writeImage(Image::Pixel *rImg, Universe *u, Image *img)
+void writeImage(Image::Pixel *rImg, Image *img, Graph *g)
 {
     FILE *saida = fopen("saida.ppm", "wb+");
     if (!saida)
@@ -23,8 +23,13 @@ void writeImage(Image::Pixel *rImg, Universe *u, Image *img)
     {
         for (int j = 0; j < img->header.width; j++)
         {
-            comp = u->find((i * img->header.width + j) + (i));
+            comp = g->adj[i * img->header.width + j].seed;
+            if (comp == -1)
+            {
+                fprintf(saida, "%c%c%c", 255, 255, 255);
+            }
 
+            // cout << comp <<" ";
             fprintf(saida, "%c%c%c", rImg[comp].red, rImg[comp].green, rImg[comp].blue);
         }
     }
@@ -36,12 +41,24 @@ int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
-    Image *image = new Image("flower.ppm");
+    Image *image = new Image("flamengo.ppm");
     image->readImage();
+    image->smooth(0.8);
     size_t graphSize = image->imgSize;
+    Graph *g = new Graph(graphSize, image, 10, 500);
+    g->imageToGraph(image);
+    g->segmentation();
+    Image::Pixel *p = (Image::Pixel *)malloc(g->nseeds * sizeof(Image::Pixel));
+    for (size_t i = 0; i < g->nseeds; i++)
+    {
+        p[i].red = rand() % 256;
+        p[i].green = rand() % 256;
+        p[i].blue = rand() % 256;
+    }
+    writeImage(p, image, g);
     auto end = sc.now();                                                 // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<chrono::duration<double>>(end - start); // measure time span between start & end
     cout << "Operation took: " << time_span.count() << " seconds !!!";
-    system("pause");
+    // system("pause");
     return 0;
 }
