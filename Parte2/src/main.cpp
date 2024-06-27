@@ -24,14 +24,7 @@ void writeImage(Image::Pixel *rImg, Image *img, Graph *g)
         for (int j = 0; j < img->header.width; j++)
         {
             comp = g->adj[i * img->header.width + j].seed;
-            // if (comp == -1)
-            // {
-            //     fprintf(saida, "%c%c%c", 255, 255, 255);
-            // }
-
-            // // cout << comp <<" ";
             fprintf(saida, "%c%c%c", rImg[comp].red, rImg[comp].green, rImg[comp].blue);
-            // fprintf(saida, "%c%c%c", img->img[i][j].red, img->img[i][j].green, img->img[i][j].blue);
         }
     }
 
@@ -42,12 +35,14 @@ int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
-    Image *image = new Image("images/flamengo.ppm");
+    Image *image = new Image("images/cerebro.ppm");
     image->readImage();
+    // transforma em escala de cinza
     image->greyScale();
+    // aplica filtro gaussiano
     image->smooth(0.8);
     size_t graphSize = image->imgSize;
-    Graph *g = new Graph(graphSize, image, 1000);
+    Graph *g = new Graph(graphSize, image, INT32_MAX);
     g->imageToGraph(image);
     g->segmentation();
     Image::Pixel *p = (Image::Pixel *)malloc(g->nseeds * sizeof(Image::Pixel));

@@ -2,7 +2,6 @@
 #include "image.hpp"
 #include <iostream>
 #include <string.h>
-#include <unionFind.hpp>
 
 Image::Image(const char *filename)
 {

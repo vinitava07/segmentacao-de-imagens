@@ -7,7 +7,6 @@
 #include <image.hpp>
 #include <algorithm>
 #include <iterator>
-#include <unionFind.hpp>
 #include <math.h>
 #include <numeric>
 #include <queue>
@@ -110,7 +109,7 @@ public:
     }
     void readSeed()
     {
-        FILE *fp = fopen("seeds/seeds_flamengo.txt", "r");
+        FILE *fp = fopen("seeds/seeds_cerebro.txt", "r");
         int ncols, nrows;
 
         if (fp == NULL)
@@ -169,11 +168,6 @@ public:
         // result = std::abs(((p.red + p.green + p.blue) / 3) - ((p2.red + p2.green + p2.blue) / 3));
         result = std::sqrt(pow((p.red - p2.red), 2) + pow((p.green - p2.green), 2) + pow((p.blue - p2.blue), 2));
         // result = std::sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue);
-        if (result != 0)
-        {
-            /* code */
-            // cout << "result: " << result << endl;
-        }
 
         return result;
     }
@@ -201,6 +195,7 @@ public:
             for (int i = 0; i < (v->adj->size()); i++)
             {
                 float pathCost = (v->adj->at(i).edge);
+                // se o peso do vertice for maior que o peso da aresta que é ligada até ele
                 if (adj[v->adj->at(i).label].weight > pathCost)
                 {
                     // se a aresta foi descoberta e o custo pra ir até o vertice é maior que o limiar então não "roube"
