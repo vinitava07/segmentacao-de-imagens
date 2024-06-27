@@ -109,7 +109,7 @@ public:
     }
     void readSeed()
     {
-        FILE *fp = fopen("seeds/seeds_cerebro.txt", "r");
+        FILE *fp = fopen("seeds/seeds_billgreen.txt", "r");
         int ncols, nrows;
 
         if (fp == NULL)

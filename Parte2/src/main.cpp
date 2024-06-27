@@ -34,15 +34,40 @@ void writeImage(Image::Pixel *rImg, Image *img, Graph *g)
 int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
-    auto start = sc.now();
-    Image *image = new Image("images/cerebro.ppm");
+    Image *image = new Image("images/billgreen.ppm");
+    int grey = 0;
+    int gauss = 1;
+    int limit = 1;
+    float sigma = 0.8;
+    float threshold = 1;
     image->readImage();
-    // transforma em escala de cinza
-    image->greyScale();
-    // aplica filtro gaussiano
-    image->smooth(0.8);
+    cout << "Deseja transformar a imagem em preto e branco? (0) NAO - (1) SIM" << endl;
+    // cin >> grey;
+    if (grey)
+    {
+        // transforma em escala de cinza
+        image->greyScale();
+    }
+    cout << "Deseja utilizar uma mascara gaussiana? (0) NAO - (1) SIM" << endl;
+    // cin >> gauss;
+    if (gauss)
+    {
+        cout << "Qual o valor do desvio padrao? (Padrao = 0.8)" << endl;
+        // cin >> sigma;
+        // aplica filtro gaussiano
+        image->smooth(sigma);
+    }
+    cout << "Deseja permitir um limiar de caminhamento? (0) NAO - (1) SIM" << endl;
+    // cin >> limit;
+    if (limit)
+    {
+        cout << "Qual o valor do limiar? (Padrao = 10000)" << endl;
+        // cin >> threshold;
+    }
+
+    auto start = sc.now();
     size_t graphSize = image->imgSize;
-    Graph *g = new Graph(graphSize, image, INT32_MAX);
+    Graph *g = new Graph(graphSize, image, threshold);
     g->imageToGraph(image);
     g->segmentation();
     Image::Pixel *p = (Image::Pixel *)malloc(g->nseeds * sizeof(Image::Pixel));

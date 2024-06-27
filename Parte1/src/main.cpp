@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
     image->greyScale();
     // aplicar filtro gaussiano na imagem
     image->smooth(0.8);
-    Graph *g = new Graph(graphSize, image, 35, 300);
+    Graph *g = new Graph(graphSize, image, 10000, 400);
     // criar o grafo relativo a imagem (pode ser melhorado)
     g->imageToGraph(image);
     // realiza a segmentação e devolve o union-find
