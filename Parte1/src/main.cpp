@@ -39,19 +39,18 @@ int main(int argc, char const *argv[])
     char fileName[40] = "";
     char prefix[30] = "images/";
 
-    cout << "Qual o nome da imagem que você deseja segmentar (sem o .ppm)" << endl;
+    cout << "Qual o nome da imagem que voce deseja segmentar (sem o .ppm)" << endl;
     cin >> imageName;
     strcpy(fileName, imageName);
     strcat(fileName, ".ppm");
     strcat(prefix, fileName);
-    cout << prefix;
     Image *image = new Image(prefix);
     image->readImage();
     size_t graphSize = image->imgSize;
 
     int gauss;
-    int threshold;
-    int min;
+    int threshold = 300;
+    int min = 50;
     int grey;
     float sigma;
 

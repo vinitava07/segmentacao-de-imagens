@@ -108,8 +108,8 @@ public:
             int currLabel = adj[i][j].label;
             int destLabel = adj[destI][destJ].label;
             weight = (int)(intensity(p, adj[i][j].pixel));
-            adj[i][j].addVertex(p, weight, destLabel);
-            adj[destI][destJ].addVertex(adj[i][j].pixel, weight, currLabel);
+            // adj[i][j].addVertex(p, weight, destLabel);
+            // adj[destI][destJ].addVertex(adj[i][j].pixel, weight, currLabel);
             edges->push_back(Edge(new Vizinho(p, 0, currLabel), new Vizinho(adj[i][j].pixel, 0, destLabel), weight));
         }
     }

@@ -37,12 +37,11 @@ int main(int argc, char const *argv[])
     char imageName[40];
     char fileName[40] = "";
     char prefix[30] = "images/";
-    cout << "Qual o nome da imagem que você deseja segmentar (sem o .ppm)" << endl;
+    cout << "Qual o nome da imagem que voce deseja segmentar (sem o .ppm)" << endl;
     cin >> imageName;
     strcpy(fileName, imageName);
     strcat(fileName, ".ppm");
     strcat(prefix, fileName);
-    cout << prefix;
 
     Image *image = new Image(prefix);
     image->readImage();
@@ -91,7 +90,7 @@ int main(int argc, char const *argv[])
         p[i].green = rand() % 256;
         p[i].blue = rand() % 256;
     }
-    
+
     writeImage(p, image, g);
     auto end = sc.now();                                                 // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<chrono::duration<double>>(end - start); // measure time span between start & end
