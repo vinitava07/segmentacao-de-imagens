@@ -34,42 +34,56 @@ void writeImage(Image::Pixel *rImg, Image *img, Graph *g)
 int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
-    Image *image = new Image("images/billgreen.ppm");
+    char imageName[40];
+    char fileName[40] = "";
+    char prefix[30] = "images/";
+    cout << "Qual o nome da imagem que você deseja segmentar (sem o .ppm)" << endl;
+    cin >> imageName;
+    strcpy(fileName, imageName);
+    strcat(fileName, ".ppm");
+    strcat(prefix, fileName);
+    cout << prefix;
+
+    Image *image = new Image(prefix);
+    image->readImage();
+
     int grey = 0;
     int gauss = 1;
     int limit = 1;
     float sigma = 0.8;
-    float threshold = 1;
-    image->readImage();
+    float threshold = INT32_MAX;
+
     cout << "Deseja transformar a imagem em preto e branco? (0) NAO - (1) SIM" << endl;
-    // cin >> grey;
+    cin >> grey;
     if (grey)
     {
         // transforma em escala de cinza
         image->greyScale();
     }
     cout << "Deseja utilizar uma mascara gaussiana? (0) NAO - (1) SIM" << endl;
-    // cin >> gauss;
+    cin >> gauss;
     if (gauss)
     {
         cout << "Qual o valor do desvio padrao? (Padrao = 0.8)" << endl;
-        // cin >> sigma;
+        cin >> sigma;
         // aplica filtro gaussiano
         image->smooth(sigma);
     }
     cout << "Deseja permitir um limiar de caminhamento? (0) NAO - (1) SIM" << endl;
-    // cin >> limit;
+    cin >> limit;
     if (limit)
     {
         cout << "Qual o valor do limiar? (Padrao = 10000)" << endl;
-        // cin >> threshold;
+        cin >> threshold;
     }
 
     auto start = sc.now();
     size_t graphSize = image->imgSize;
     Graph *g = new Graph(graphSize, image, threshold);
+    g->readSeed(imageName);
     g->imageToGraph(image);
     g->segmentation();
+
     Image::Pixel *p = (Image::Pixel *)malloc(g->nseeds * sizeof(Image::Pixel));
     for (size_t i = 0; i < g->nseeds; i++)
     {
@@ -77,10 +91,12 @@ int main(int argc, char const *argv[])
         p[i].green = rand() % 256;
         p[i].blue = rand() % 256;
     }
+    
     writeImage(p, image, g);
     auto end = sc.now();                                                 // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<chrono::duration<double>>(end - start); // measure time span between start & end
-    cout << "Operation took: " << time_span.count() << " seconds !!!";
+    cout << "A segmentacao durou: " << time_span.count() << " segundos !!!" << endl
+         << "Lembre-se de excluir a saida.ppm para evitar erros ao gerar outro arquivo!";
     // system("pause");
     return 0;
 }

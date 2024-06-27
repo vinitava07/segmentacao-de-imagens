@@ -12,7 +12,7 @@ Image::Image(const char *filename)
     f = fopen(filename, "rb+");
     if (f == NULL)
     {
-        printf("The Image is not opened. The program will now exit.");
+        printf("The Image is not found. The program will now exit.");
         exit(0);
     }
     readImageHeader();

@@ -167,10 +167,10 @@ public:
         return c / (size);
     }
 
-    Graph(size_t v, Image *img, int m, int ka)
+    Graph(size_t v, Image *img, int m, int t)
     {
         min = m;
-        k = ka;
+        k = t;
         height = img->header.height;
         width = img->header.width;
         edges = new std::vector<Edge>();

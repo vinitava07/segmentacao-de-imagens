@@ -12,7 +12,7 @@
             ],
             "cStandard": "c11",
             "intelliSenseMode": "windows-msvc-x64",
-            "compilerPath": "E:/mingw64/bin/g++.exe"
+            "compilerPath": "E:/mingw64/bin/gcc.exe"
         }
     ],
     "version": 4

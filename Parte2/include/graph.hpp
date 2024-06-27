@@ -37,7 +37,6 @@ public:
         int height = image->header.height;
         int width = image->header.width;
         int label = 0;
-        readSeed();
         // estebelece os pixeis para cada vertice
         for (int i = 0; i < height; i++)
         {
@@ -107,14 +106,20 @@ public:
         delete[] image->img;
         delete image->pixels;
     }
-    void readSeed()
+    void readSeed(char *imageName)
     {
-        FILE *fp = fopen("seeds/seeds_billgreen.txt", "r");
+        char fileName[40];
+        char prefix[40] = "seeds/seeds_";
+        strcat(prefix, imageName);
+        strcat(prefix, ".txt");
+        strcpy(fileName, prefix);
+        FILE *fp = fopen(fileName, "r");
         int ncols, nrows;
 
         if (fp == NULL)
         {
             fprintf(stderr, "Erro ao abrir o arquivo seeds.txt\n");
+            exit(0);
             return;
         }
         if (fscanf(fp, "%d %d %d", &nseeds, &ncols, &nrows) != 3)
