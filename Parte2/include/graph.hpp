@@ -20,8 +20,7 @@ class Graph
 private:
     int height;
     int width;
-    int min;
-    int k;
+    int threshold;
     typedef struct
     {
         int x, y, mk, la;
@@ -55,8 +54,6 @@ public:
             int x = seeds[i].x;
             int y = seeds[i].y;
             int mk = seeds[i].mk;
-            int la = seeds[i].la;
-
             if (x >= 0 && x < width && y >= 0 && y < height)
             {
                 adj[y * width + x].weight = 0;
@@ -104,17 +101,16 @@ public:
             }
         }
 
-        free(image->img);
+        for (int i = 0; i < image->header.height; i++)
+        {
+            delete[] image->img[i]; // Libera cada array de img
+        }
+        delete[] image->img;
         delete image->pixels;
-        // for (int i = 0; i < image->header.height; i++)
-        // {
-        //     delete[] adj[i]; // Libera cada array de Vertex
-        // }
-        // delete[] adj;
     }
     void readSeed()
     {
-        FILE *fp = fopen("seeds_flamengo.txt", "r");
+        FILE *fp = fopen("seeds/seeds_flamengo.txt", "r");
         int ncols, nrows;
 
         if (fp == NULL)
@@ -129,11 +125,12 @@ public:
             return;
         }
         seeds = (Seed *)malloc(nseeds * sizeof(Seed));
+        int t;
         for (int i = 0; i < nseeds; i++)
         {
-            if (fscanf(fp, "%d %d %d %d", &seeds[i].x, &seeds[i].y, &seeds[i].mk, &seeds[i].la) != 4)
+            if (fscanf(fp, "%d %d %d %d", &seeds[i].x, &seeds[i].y, &seeds[i].mk, &t) != 4)
             {
-                fprintf(stderr, "Formato inválido no arquivo seeds.txt\n");
+                fprintf(stderr, "Formato inválido no arquivo 2 seeds.txt\n");
                 free(seeds);
                 fclose(fp);
                 return;
@@ -141,14 +138,7 @@ public:
         }
         fclose(fp);
     }
-    void searchSeed(Seed *seeds, int index, int x, int y, int mk, int la)
-    {
 
-        seeds[index].x = x;
-        seeds[index].y = y;
-        seeds[index].mk = mk;
-        seeds[index].la = la;
-    }
     void addPixel(int i, int j, Image::Pixel pixel, int label)
     {
         adj[i * width + j].pixel = pixel;
@@ -163,29 +153,35 @@ public:
             int destLabel = adj[destI * width + destJ].label;
             int currW = adj[i * width + j].weight;
             int destW = adj[destI * width + destJ].weight;
-            int w3 = (adj[destI * width + destJ].pixel.red + adj[destI * width + destJ].pixel.green + adj[destI * width + destJ].pixel.blue) / 3;
 
-            weight = (int)(intensity(p, adj[i * width + j].pixel));
-            // cout << "aresta: " << weight << endl;
-
+            weight = (intensity(p, adj[i * width + j].pixel));
             adj[i * width + j].addVertex(p, weight, destLabel, destW);
             adj[destI * width + destJ].addVertex(adj[i * width + j].pixel, weight, currLabel, currW);
-            // edges->push_back(Edge(new Vizinho(p, 0, currLabel), new Vizinho(adj[i * width + j].pixel, 0, destLabel), weight));
         }
     }
     // equilibrar o peso da aresta baseado nos pixeis que ela liga
     float intensity(Image::Pixel p, Image::Pixel p2)
     {
         float result = 0;
-        result = std::abs(((p.red + p.green + p.blue) / 3) - ((p2.red + p2.green + p2.blue) / 3));
-        // result = std::sqrt(pow((p.red - p2.red), 2) + pow((p.green - p2.green), 2) + pow((p.blue - p2.blue), 2));
+        int diffRed = p.red - p2.red;
+        int diffGreen = p.green - p2.green;
+        int diffBlue = p.blue - p2.blue;
+        // result = std::abs(((p.red + p.green + p.blue) / 3) - ((p2.red + p2.green + p2.blue) / 3));
+        result = std::sqrt(pow((p.red - p2.red), 2) + pow((p.green - p2.green), 2) + pow((p.blue - p2.blue), 2));
+        // result = std::sqrt(diffRed * diffRed + diffGreen * diffGreen + diffBlue * diffBlue);
+        if (result != 0)
+        {
+            /* code */
+            // cout << "result: " << result << endl;
+        }
+
         return result;
     }
 
     void segmentation()
     {
+        // fila de prioridade com os vértices
         std::priority_queue<Vertex *, std::vector<Vertex *>, Vertex::CompareVertex> *queue = new std::priority_queue<Vertex *, std::vector<Vertex *>, Vertex::CompareVertex>();
-        std::vector<int> *visited = new std::vector<int>();
         for (int i = 0; i < height; ++i)
         {
             for (int j = 0; j < width; ++j)
@@ -193,85 +189,44 @@ public:
                 if (adj[i * width + j].weight != INT32_MAX)
                 {
                     queue->emplace(&adj[i * width + j]);
-                    // cout << "elemento adicionado: " << adj[i * width + j].label << endl;
                 }
             }
         }
         Vertex *v;
-        int count = 0;
         while (!queue->empty())
         {
             v = queue->top();
-            // if (v->weight == 0 )
-            // {
-            if (v->seed != 0 && v->seed != 1)
-            {
-                /* code */
-                // cout << "elemento RETIRADOOO: " << v->seed << endl;
-            }
-
-            //     /* code */
-            //     count++;
-            //     continue;
-            // }
             queue->pop(); // Remover o nó da fila de prioridades
 
             for (int i = 0; i < (v->adj->size()); i++)
             {
-                int pathCost = (v->adj->at(i).edge);
-                // cout << "peso da aresta: " << pathCost << endl;
-
-                // int novoCusto = pathCost + newCost(v->pixel, v->adj->at(i).p);
-                // int limit = (int)(intensity(v->pixel, adj[v->adj->at(i).label].pixel));
-                if (adj[v->adj->at(i).label].weight > v->weight + pathCost)
+                float pathCost = (v->adj->at(i).edge);
+                if (adj[v->adj->at(i).label].weight > pathCost)
                 {
-                    // Atualizar o peso do nó adjacente
-                    if (adj[v->adj->at(i).label].seed != -1 && pathCost > k)
+                    // se a aresta foi descoberta e o custo pra ir até o vertice é maior que o limiar então não "roube"
+                    if (adj[v->adj->at(i).label].seed != -1 && (pathCost) > threshold)
                     {
-                        /* code */
+                        // era so inverter essa logica maluca mas o branch predictor faz a boa
                     }
-                    else
+                    else // aresta nao foi descoberta ou o limiar nao é o suficiente
                     {
-
-                        v->adj->at(i).weight = v->weight + pathCost;
-                        adj[v->adj->at(i).label].weight = v->weight + pathCost;
+                        // Atualizar o peso do nó adjacente
+                        v->adj->at(i).weight = pathCost;
+                        adj[v->adj->at(i).label].weight = pathCost;
                         adj[v->adj->at(i).label].seed = v->seed;
-                        // cout << "seed vencedora: " << v->seed << endl;
                         queue->emplace(&adj[v->adj->at(i).label]);
-                        // cout << "elemento adicionado: " << v->adj->at(i).label << endl;
-                        // cout << "elemento peso: " << adj[v->adj->at(i).label].weight << endl;
                     }
                 }
             }
-            count++;
         }
-    }
-    int newCost(Image::Pixel p1, Image::Pixel p2)
-    {
-        int result = std::abs(((p1.red + p1.green + p1.blue) / 3) - ((p2.red + p2.green + p2.blue) / 3));
-        return 0;
-    }
-    bool isVisited(std::vector<int> *v, int label)
-    {
-        for (int i = 0; i < v->size(); i++)
-        {
-            if (v->at(i) == label)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
-    Graph(size_t v, Image *img, int m, int ka)
+    Graph(size_t v, Image *img, int t)
     {
-        min = m;
-        k = ka;
+        threshold = t;
         height = img->header.height;
         width = img->header.width;
-        // edges = new std::vector<Edge>();
         adj = new Vertex[img->header.height * img->header.width];
-
         vertices = v;
     };
     ~Graph()

@@ -3,6 +3,7 @@
         "vector": "cpp",
         "cmath": "cpp",
         "new": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "iostream": "cpp"
     }
 }

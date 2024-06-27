@@ -23,7 +23,7 @@ void writeImage(Image::Pixel *rImg, Universe *u, Image *img, Graph *g)
     {
         for (int j = 0; j < img->header.width; j++)
         {
-            comp = u->find((i * img->header.width + j) + (i));
+            comp = u->find((i * img->header.width + j));
 
             fprintf(saida, "%c%c%c", rImg[comp].red, rImg[comp].green, rImg[comp].blue);
         }
@@ -36,11 +36,13 @@ int main(int argc, char const *argv[])
 {
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
-    Image *image = new Image("flamengo.ppm");
+    Image *image = new Image("images/man.ppm");
     image->readImage();
     size_t graphSize = image->imgSize;
+    // aplica filtro cinza (preto e branco)
+    image->greyScale();
     // aplicar filtro gaussiano na imagem
-    image->smooth(0.2);
+    image->smooth(0.8);
     Graph *g = new Graph(graphSize, image, 35, 300);
     // criar o grafo relativo a imagem (pode ser melhorado)
     g->imageToGraph(image);
@@ -58,6 +60,7 @@ int main(int argc, char const *argv[])
     auto end = sc.now();                                                 // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<chrono::duration<double>>(end - start); // measure time span between start & end
     cout << "Operation took: " << time_span.count() << " seconds !!!";
-    system("pause");
+    cout << "?";
+    // system("pause");
     return 0;
 }

@@ -38,8 +38,7 @@ def generate_seeds(image, elements, num_seeds):
         y = random.randint(0, height - 1)
         color = tuple(image[y, x])
         label = elements[color]
-        random_int = random.randint(0, 5)
-        seeds.append(f'{x} {y} {label} {random_int}')
+        seeds.append(f'{x} {y} {label}')
     return seeds
 
 # Carregar a imagem PPM

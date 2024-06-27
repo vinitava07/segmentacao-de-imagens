@@ -47,7 +47,7 @@ int main(int argc, char const *argv[])
     image->greyScale();
     image->smooth(0.8);
     size_t graphSize = image->imgSize;
-    Graph *g = new Graph(graphSize, image, 10, 5);
+    Graph *g = new Graph(graphSize, image, 1000);
     g->imageToGraph(image);
     g->segmentation();
     Image::Pixel *p = (Image::Pixel *)malloc(g->nseeds * sizeof(Image::Pixel));
