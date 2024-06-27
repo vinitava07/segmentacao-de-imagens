@@ -2,6 +2,7 @@
     "files.associations": {
         "vector": "cpp",
         "cmath": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "chrono": "cpp"
     }
 }

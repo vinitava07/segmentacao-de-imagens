@@ -114,7 +114,7 @@ public:
     }
     void readSeed()
     {
-        FILE *fp = fopen("seeds.txt", "r");
+        FILE *fp = fopen("seeds_flamengo.txt", "r");
         int ncols, nrows;
 
         if (fp == NULL)
@@ -177,8 +177,8 @@ public:
     float intensity(Image::Pixel p, Image::Pixel p2)
     {
         float result = 0;
-        // result = std::abs(((p.red + p.green + p.blue) / 3) - ((p2.red + p2.green + p2.blue) / 3));
-        result = std::sqrt(pow((p.red - p2.red), 2) + pow((p.green - p2.green), 2) + pow((p.blue - p2.blue), 2));
+        result = std::abs(((p.red + p.green + p.blue) / 3) - ((p2.red + p2.green + p2.blue) / 3));
+        // result = std::sqrt(pow((p.red - p2.red), 2) + pow((p.green - p2.green), 2) + pow((p.blue - p2.blue), 2));
         return result;
     }
 
@@ -193,11 +193,6 @@ public:
                 if (adj[i * width + j].weight != INT32_MAX)
                 {
                     queue->emplace(&adj[i * width + j]);
-                    if (adj[i * width + j].seed != 0 && adj[i * width + j].seed != 1)
-                    {
-                        /* code */
-                        // cout << "elemento RETIRADOOO: " << adj[i * width + j].seed << endl;
-                    }
                     // cout << "elemento adicionado: " << adj[i * width + j].label << endl;
                 }
             }
@@ -231,7 +226,7 @@ public:
                 if (adj[v->adj->at(i).label].weight > v->weight + pathCost)
                 {
                     // Atualizar o peso do nó adjacente
-                    if (adj[v->adj->at(i).label].seed != -1 && pathCost > 5)
+                    if (adj[v->adj->at(i).label].seed != -1 && pathCost > k)
                     {
                         /* code */
                     }
