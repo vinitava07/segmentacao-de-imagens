@@ -2,7 +2,6 @@
 #include "image.hpp"
 #include <iostream>
 #include <string.h>
-#include <unionFind.hpp>
 
 Image::Image(const char *filename)
 {
@@ -13,7 +12,7 @@ Image::Image(const char *filename)
     f = fopen(filename, "rb+");
     if (f == NULL)
     {
-        printf("The file is not opened. The program will now exit.");
+        printf("The Image is not opened. The program will now exit.");
         exit(0);
     }
     readImageHeader();

@@ -42,7 +42,7 @@ public:
     std::vector<double> *normalize(const std::vector<double> *mask);
     Image::Pixel **convolve_even(Image::Pixel **src, const std::vector<double> *mask);
     Pixel **arrToMatrix();
-    // void writeImage(Pixel *rImg, Universe *u);
+    void greyScale();
 
 private:
     FILE *f;

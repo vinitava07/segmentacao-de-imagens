@@ -13,7 +13,7 @@ Image::Image(const char *filename)
     f = fopen(filename, "rb+");
     if (f == NULL)
     {
-        printf("The file is not opened. The program will now exit.");
+        printf("The Image is not opened. The program will now exit.");
         exit(0);
     }
     readImageHeader();
@@ -59,6 +59,19 @@ Image::Pixel **Image::arrToMatrix()
     // free(pixels);
 
     return img;
+}
+void Image::greyScale()
+{
+    for (int i = 0; i < header.height; i++)
+    {
+        for (int j = 0; j < header.width; j++)
+        {
+            int grey = (img[i][j].red + img[i][j].green + img[i][j].blue) / 3;
+            img[i][j].red = grey;
+            img[i][j].green = grey;
+            img[i][j].blue = grey;
+        }
+    }
 }
 
 void Image::readFileUntil(char buffer[], char condition)

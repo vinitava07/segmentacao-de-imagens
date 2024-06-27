@@ -9,13 +9,13 @@ private:
     /* data */
 public:
     Image::Pixel p;
-    int edge;
+    float edge;
     int label;
-    int weight = INT32_MAX;
+    float weight = INT32_MAX;
 
     // Construtor usando lista de inicialização
     Vizinho() : p(), edge(0) {}
-    Vizinho(Image::Pixel p, int e, int l, int w) : p(p), edge(e), label(l), weight(w) {}
+    Vizinho(Image::Pixel p, float e, int l, float w) : p(p), edge(e), label(l), weight(w) {}
 
     bool operator>(const Vizinho &v) const
     {
@@ -45,15 +45,15 @@ private:
 public:
     Image::Pixel pixel;
     std::vector<Vizinho> *adj;
-    int weight = INT32_MAX;
+    float weight = INT32_MAX;
     int label;
     bool check = false;
     int seed = -1;
-    void addVertex(Image::Pixel p, int e, int l, int w)
+    void addVertex(Image::Pixel p, float e, int l, float w)
     {
         adj->push_back(Vizinho(p, e, l, w));
     }
-    Vertex(int w) : adj(new std::vector<Vizinho>()), weight(w){};
+    Vertex(float w) : adj(new std::vector<Vizinho>()), weight(w){};
     Vertex() : adj(new std::vector<Vizinho>()), weight(0){};
     ~Vertex() = default;
     bool operator<(const Vertex &v) const
@@ -65,7 +65,7 @@ public:
     {
         bool operator()(Vertex *const &v1, Vertex *const &v2)
         {
-            return v1->weight > v2->weight;
+            return v1->weight >= v2->weight;
         }
     };
 };

@@ -23,7 +23,6 @@ private:
 
 public:
     Vertex **adj;
-    Vertex **resultGraph;
     std::vector<Edge> *edges;
     int vertices;
     void imageToGraph(Image *image)
@@ -31,7 +30,7 @@ public:
         int height = image->header.height;
         int width = image->header.width;
         int label = 0;
-        //estebelece os pixeis para cada vertice
+        // estebelece os pixeis para cada vertice
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
@@ -39,9 +38,8 @@ public:
                 addPixel(i, j, image->img[i][j], label);
                 label++;
             }
-            label++;
         }
-        //liga os vertices pela vizinhaça dos 8 lados na imagem
+        // liga os vertices pela vizinhaça dos 8 lados na imagem
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
@@ -82,7 +80,15 @@ public:
             }
         }
 
-        free(image->img);
+        freeElements(image);
+    }
+    void freeElements(Image *image)
+    {
+        for (int i = 0; i < image->header.height; i++)
+        {
+            delete[] image->img[i]; // Libera cada array de img
+        }
+        delete[] image->img;
         delete image->pixels;
         for (int i = 0; i < image->header.height; i++)
         {
@@ -92,7 +98,6 @@ public:
     }
     void addPixel(int i, int j, Image::Pixel pixel, int label)
     {
-
         adj[i][j].pixel = pixel;
         adj[i][j].label = label;
     }
@@ -108,7 +113,7 @@ public:
             edges->push_back(Edge(new Vizinho(p, 0, currLabel), new Vizinho(adj[i][j].pixel, 0, destLabel), weight));
         }
     }
-    //equilibrar o peso da aresta baseado nos pixeis que ela liga
+    // equilibrar o peso da aresta baseado nos pixeis que ela liga
     float intensity(Image::Pixel p, Image::Pixel p2)
     {
         float result = 0;
@@ -119,23 +124,21 @@ public:
     {
 
         Universe *u = new Universe(edges->size(), vertices);
-
         float c = k;
         float *threshold = (float *)malloc(vertices * sizeof(float));
+
         for (int i = 0; i < vertices; i++)
         {
             getThreshold(1, c);
         }
         // ordena as arestas
-         std::sort(edges->begin(), edges->end());
-        // ve se as arestas de duas arvores diferentes pertecem ao threshold, se sim, junte os componentes
+        std::sort(edges->begin(), edges->end());
+        // ve se as arestas de duas arvores diferentes pertecem ao threshold(menor aresta da MST?), se sim, junte os componentes
         for (int i = 0; i < edges->size(); i++)
         {
 
             int v1 = u->find(edges->at(i).v1->label);
             int v2 = u->find(edges->at(i).v2->label);
-            // cout << "v1: " << v1 << " v2: " << v2 << endl;
-
             if (v1 != v2)
             {
                 if (edges->at(i).value <= threshold[v1] && edges->at(i).value <= threshold[v2])
