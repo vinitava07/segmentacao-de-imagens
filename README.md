@@ -8,3 +8,7 @@ Utilize o Make para compilar corretamente, execute a main.
 cd ParteX/
 make
 ./main
+
+Parte 1: Algoritmo de Árvore Geradora Mínima
+
+Parte 2: IFT
