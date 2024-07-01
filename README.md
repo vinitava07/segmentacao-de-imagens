@@ -2,12 +2,12 @@
 
 Este repositório contém a implementação de dois algoritmos de segmentação de imagens baseados em grafos:
 
-1. **Segmentação de Imagens Eficiente Baseada em Árvore Geradora Mínima** por Felzenszwalb e Huttenlocher (2004)
+1. **Segmentação de Imagens Eficiente Baseada em Grafos** por Felzenszwalb e Huttenlocher (2004)
 2. **The image foresting transform** por Falcao, Stolfi e Lotufo (2004)
 
 ## Algoritmos
 
-### 1. Segmentação de Imagens Eficiente Baseada em Árvore Geradora Mínima
+### 1. Segmentação de Imagens Eficiente Baseada em Grafos
 
 Felzenszwalb, P. F. e Huttenlocher, D. P. (2004). "Efficient graph-based image segmentation". *International Journal of Computer Vision*.
 
