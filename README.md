@@ -42,7 +42,7 @@ Para rodar o código de cada algoritmo, siga as instruções abaixo:
 
 1. Navegue até o diretório `Parte2`:
     ```sh
-    cd ´Parte2
+    cd Parte2
     ```
 2. Execute o Makefile:
     ```sh
