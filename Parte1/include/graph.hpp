@@ -159,7 +159,6 @@ public:
                 u->join(v1, v2);
             }
         }
-        delete edges;
         return u;
     }
     float getThreshold(float size, float c)

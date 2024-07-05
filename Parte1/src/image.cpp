@@ -29,7 +29,7 @@ void Image::readImage()
 {
     size_t triples = (imgSize * 3);
     unsigned char *buffer = (unsigned char *)malloc(sizeof(char) * triples + 1);
-    fread(buffer, sizeof(char), triples, f);
+    int t = fread(buffer, sizeof(char), triples, f);
     size_t bufferOffset = 0;
     for (size_t i = 0; i < imgSize; i++)
     {

@@ -74,7 +74,7 @@ int main(int argc, char const *argv[])
     cout << "Qual o valor minimo para o tamanho dos componentes?" << endl;
     cin >> min;
     cout << "Qual o valor do threshold das arestas?" << endl;
-    cin >> sigma;
+    cin >> threshold;
 
     chrono::steady_clock sc; // create an object of `steady_clock` class
     auto start = sc.now();
